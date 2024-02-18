@@ -131,17 +131,15 @@ mixin MobileGestureSimulatorBinding on BindingBase {
     return PointerDataPacket(
       data: packet.data.map((v) {
         final localPosition = _getLocalPosition(v);
-        final appWithDeviceFrameKey =
-            SimulatorWidgetsFlutterBinding.instance.appWithDeviceFrameKey;
+        final appKey = SimulatorWidgetsFlutterBinding.instance.appKey;
+        final renderObject =
+            appKey.currentContext!.findRenderObject() as RenderBox;
 
-        final deviceRenderObject = appWithDeviceFrameKey.currentContext!
-            .findRenderObject() as RenderBox;
-
-        final deviceRect = deviceRenderObject.localToGlobal(
-              deviceRenderObject.paintBounds.topLeft,
-              ancestor: deviceRenderObject,
+        final deviceRect = renderObject.localToGlobal(
+              Offset.zero,
+              ancestor: renderObject,
             ) &
-            deviceRenderObject.size;
+            renderObject.size;
 
         if (localPosition != null && !deviceRect.contains(localPosition)) {
           return v;
