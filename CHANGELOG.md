@@ -1,3 +1,7 @@
+## 0.0.6
+
+* Decreased the minimum SDK requirement to `3.0.0`.
+
 ## 0.0.5
 
 * Dropped dependency on `vm_service` due to package incompatibilities.
