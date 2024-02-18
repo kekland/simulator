@@ -1,13 +1,16 @@
 # simulator
 
+![Pub Publisher](https://img.shields.io/pub/publisher/simulator)
+![Pub Version](https://img.shields.io/pub/v/simulator)
+
 **Warning: This is a work in progress and may contain bugs. Use at your own risk.**
 
 A device simulator for Flutter. Run your app on the desktop, and simulate a device of your choice. Perfect for rapid development of multi-platform user interfaces.
 
 <p align="center">
-  <img alt="Image 1" src="./doc/image3.jpg" width="45%">
+  <img alt="Image 1" src="https://raw.githubusercontent.com/kekland/simulator/master/doc/image3.jpg" width="45%">
 &nbsp; &nbsp; 
-  <img alt="Image 2" src="./doc/image4.jpg" width="45%">
+  <img alt="Image 2" src="https://raw.githubusercontent.com/kekland/simulator/master/doc/image4.jpg" width="45%">
 </p>
 
 ## Why?
@@ -75,31 +78,31 @@ Now you can run the simulator with `flutter run -t lib/main.simulator.dart`. Mak
 
 Allows you to take a screenshot of the simulated device (or just the app). By default, the screenshots are saved to the temporary directory.
 
-![Screenshot module](./doc/screenshot-module.jpg)
+![Screenshot module](https://raw.githubusercontent.com/kekland/simulator/master/doc/screenshot-module.jpg)
 
 ### Device module
 
 Allows you to pick a device to simulate. The device is picked from a list of supported devices.
 
-![Device module](./doc/device-module.jpg)
+![Device module](https://raw.githubusercontent.com/kekland/simulator/master/doc/device-module.jpg)
 
 ### Keyboard module
 
 Allows you to simulate the device keyboard. When the system call to show the keyboard is intercepted, the keyboard is shown in the simulator instead. You can choose between no keyboard, an iOS or an Android keyboard (or auto-detect based on the platform).
 
-![Keyboard module](./doc/keyboard-module.jpg)
+![Keyboard module](https://raw.githubusercontent.com/kekland/simulator/master/doc/keyboard-module.jpg)
 
 ### Gestures module
 
 Allows you to simulate mobile gestures with a mouse. The main feature is the conversion of mouse events to touch gestures in the simulator view. You can also simulate a zoom gesture by enabling it and holding the `Ctrl` key.
 
-![Gestures module](./doc/gestures-module.jpg)
+![Gestures module](https://raw.githubusercontent.com/kekland/simulator/master/doc/gestures-module.jpg)
 
 ### VM module
 
 Shows the heap usage for all of the isolates in the VM. It also allows you to fire the memory pressure event (`didHaveMemoryPressure()`).
 
-![VM module](./doc/vm-module.jpg)
+![VM module](https://raw.githubusercontent.com/kekland/simulator/master/doc/vm-module.jpg)
 
 ### Debug module
 
@@ -111,19 +114,19 @@ Additionally, includes some custom debugging flags:
 
 - Visualize view paddings - shows the view paddings and insets applied to the app.
 
-![Debug module](./doc/debug-module.jpg)
+![Debug module](https://raw.githubusercontent.com/kekland/simulator/master/doc/debug-module.jpg)
 
 ### Locale module
 
 Allows you to control the system locale. This is work-in-progress and will be improved.
 
-![Locale module](./doc/locale-module.jpg)
+![Locale module](https://raw.githubusercontent.com/kekland/simulator/master/doc/locale-module.jpg)
 
 ### MediaQuery module
 
 Allows you to set the `MediaQuery` properties for the app. This is transparent to the app and appears like host device properties.
 
-![MediaQuery module](./doc/media-query-module.jpg)
+![MediaQuery module](https://raw.githubusercontent.com/kekland/simulator/master/doc/media-query-module.jpg)
 
 
 ## Custom modules
