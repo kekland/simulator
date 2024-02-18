@@ -1,3 +1,7 @@
+## 0.0.3
+
+* Specified platforms in Pubspec
+
 ## 0.0.2
 
 * Updated README
