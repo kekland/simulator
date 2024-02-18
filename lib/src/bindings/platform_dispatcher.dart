@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:flutter_test/flutter_test.dart';
+import 'package:simulator/src/bindings/test_platform_dispatcher.dart';
 
 typedef PointerDataPacketTransformer = PointerDataPacket Function(
   PointerDataPacket packet,
@@ -38,3 +38,4 @@ class SimulatorPlatformDispatcher extends TestPlatformDispatcher {
     };
   }
 }
+

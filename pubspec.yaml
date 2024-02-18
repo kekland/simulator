@@ -15,8 +15,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_test:
-    sdk: flutter
   
   shared_preferences: ^2.2.2
   cupertino_icons: ^1.0.6
