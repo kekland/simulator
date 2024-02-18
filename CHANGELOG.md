@@ -1,3 +1,7 @@
+## 0.0.5
+
+* Dropped dependency on `vm_service` due to package incompatibilities.
+
 ## 0.0.4
 
 * Dropped dependency on `flutter_test`.
