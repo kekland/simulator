@@ -3,6 +3,11 @@ description: "A (not just) device simulator for Flutter. Makes building multi-pl
 version: 0.0.2
 homepage: https://github.com/kekland/simulator
 
+platforms:
+  linux:
+  macos:
+  windows:
+
 environment:
   sdk: '>=3.2.3 <4.0.0'
   flutter: ">=1.17.0"
