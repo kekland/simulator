@@ -1,8 +1,10 @@
 // ignore_for_file: invalid_use_of_protected_member
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:macos_window_utils/window_manipulator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simulator/simulator.dart';
 import 'package:simulator/src/app/app_bar.dart';
@@ -34,6 +36,13 @@ Future<void> runSimulatorApp(
 Future<void> _initWindow() async {
   await windowManager.ensureInitialized();
 
+  if (Platform.isMacOS) {
+    await WindowManipulator.initialize();
+
+    WindowManipulator.makeWindowFullyTransparent();
+    await WindowManipulator.setWindowBackgroundColorToClear();
+  }
+
   const windowOptions = WindowOptions(
     backgroundColor: Colors.transparent,
     skipTaskbar: false,
@@ -43,7 +52,10 @@ Future<void> _initWindow() async {
     windowOptions,
     () async {
       await windowManager.setAsFrameless();
-      await windowManager.show();
+
+      if (!Platform.isMacOS) {
+        await windowManager.show();
+      }
     },
   );
 }
@@ -292,53 +304,64 @@ class SimulatorAppState extends State<SimulatorApp> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: WindowResizableArea(
-        child: Stack(
-          fit: StackFit.passthrough,
-          clipBehavior: Clip.none,
-          children: [
-            Positioned.fill(
-              child: _buildAppBar(context),
-            ),
-            Positioned(
-              top: SimulatorAppBar.height + 16.0,
-              left: 0.0,
-              right: 0.0,
-              bottom: 0.0,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(child: _buildApp(context)),
-                  SidePanelRevealAnimator(
-                    isVisible: _isSidePanelVisible,
-                    width: SimulatorPropertiesPanel.width + 12.0,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 12.0),
-                      child: _wrapWithMaterialStuff(
-                        context,
-                        child: SimulatorPropertiesPanel(
-                          key: _sidePanelKey,
-                          modules: widget.modules,
-                          state: _state,
-                          onChanged: (value) {
-                            _state = value;
-                            _saveParamsForModules();
-
-                            setState(() {});
-                          },
+    return ColoredBox(
+      color: Colors.transparent,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: WindowResizableArea(
+          child: Stack(
+            fit: StackFit.passthrough,
+            clipBehavior: Clip.none,
+            children: [
+              Positioned.fill(
+                child: _buildAppBar(context),
+              ),
+              Positioned(
+                top: SimulatorAppBar.height + 16.0,
+                left: 0.0,
+                right: 0.0,
+                bottom: 0.0,
+                child: LayoutBuilder(
+                  builder: (context, constraints) => Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(
+                        child: OverflowBox(
+                          maxWidth: constraints.maxWidth,
+                          maxHeight: constraints.maxHeight,
+                          child: _buildApp(context),
                         ),
                       ),
-                    ),
+                      SidePanelRevealAnimator(
+                        isVisible: _isSidePanelVisible,
+                        width: SimulatorPropertiesPanel.width + 12.0,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 12.0),
+                          child: _wrapWithMaterialStuff(
+                            context,
+                            child: SimulatorPropertiesPanel(
+                              key: _sidePanelKey,
+                              modules: widget.modules,
+                              state: _state,
+                              onChanged: (value) {
+                                _state = value;
+                                _saveParamsForModules();
+
+                                setState(() {});
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-            MobileGestureSimulatorWidget(
-              key: MobileGestureSimulatorWidget.requiredKey,
-            ),
-          ],
+              MobileGestureSimulatorWidget(
+                key: MobileGestureSimulatorWidget.requiredKey,
+              ),
+            ],
+          ),
         ),
       ),
     );
