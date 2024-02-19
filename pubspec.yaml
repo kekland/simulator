@@ -1,6 +1,6 @@
 name: simulator
 description: "A (not just) device simulator for Flutter. Makes building multi-platform UIs a breeze"
-version: 0.0.6
+version: 0.1.0
 homepage: https://github.com/kekland/simulator
 
 platforms:

@@ -53,7 +53,7 @@ However, this package is not a replacement for testing on real devices. It's jus
 
 ```yaml
 dependencies:
-  simulator: ^0.0.6
+  simulator: ^0.1.0
 ```
 
 Note: this package only works in Debug mode. The entire code of the package should be tree-shaken away in Release mode.
@@ -71,6 +71,12 @@ void main() {
 Note: if you have code that uses `FlutterWidgetsBinding.ensureInitialized()`, you should replace it with `SimulatorFlutterWidgetsBinding.ensureInitialized()`. This makes sure that the simulator initializes its bindings.
 
 Now you can run the simulator with `flutter run -t lib/main.simulator.dart`. Make sure that the simulator is ran for the desktop platform.
+
+## macOS
+
+The minimum macOS deployment target is `10.14.6`. This comes from the `macos_window_utils` package.
+
+See https://github.com/macosui/macos_window_utils.dart?tab=readme-ov-file#getting-started for more information on how to change the minimum deployment target.
 
 ## Built-in modules
 

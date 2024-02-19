@@ -1,3 +1,8 @@
+## 0.1.0
+
+* Fixed window resizing for macOS.
+* Made the layout more responsive for smaller screen sizes.
+
 ## 0.0.6
 
 * Decreased the minimum SDK requirement to `3.0.0`.
