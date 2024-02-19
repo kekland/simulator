@@ -47,14 +47,38 @@ class WindowResizableArea extends StatelessWidget {
         Positioned(
           right: 0.0,
           bottom: 0.0,
-          width: 8.0,
-          height: 8.0,
-          child: MouseRegion(
-            cursor: SystemMouseCursors.resizeDownRight,
-            child: GestureDetector(
-              onPanStart: (_) {
-                windowManager.startResizing(ResizeEdge.bottomRight);
-              },
+          width: 24.0,
+          height: 24.0,
+          child: Container(
+            width: 24.0,
+            height: 24.0,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.5),
+              shape: BoxShape.circle,
+            ),
+            child: MouseRegion(
+              cursor: SystemMouseCursors.resizeDownRight,
+              child: GestureDetector(
+                onPanStart: (_) {
+                  windowManager.startResizing(ResizeEdge.bottomRight);
+                },
+                child: const Center(
+                  child: Stack(
+                    children: [
+                      Icon(
+                        Icons.south_east_rounded,
+                        color: Colors.black,
+                        size: 16.0,
+                      ),
+                      Icon(
+                        Icons.north_west_rounded,
+                        color: Colors.black,
+                        size: 16.0,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
         ),

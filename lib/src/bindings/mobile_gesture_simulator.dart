@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:simulator/simulator.dart';
@@ -142,6 +143,10 @@ mixin MobileGestureSimulatorBinding on BindingBase {
             renderObject.size;
 
         if (localPosition != null && !deviceRect.contains(localPosition)) {
+          return v;
+        }
+
+        if (v.buttons != kPrimaryMouseButton) {
           return v;
         }
 

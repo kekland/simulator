@@ -286,18 +286,16 @@ class SimulatorAppState extends State<SimulatorApp> {
   }
 
   Widget _buildApp(BuildContext context) {
-    return WindowResizableArea(
-      child: _buildAppWrappers(
-        context,
-        Stack(
-          children: [
-            RepaintBoundary(
-              key: SimulatorWidgetsFlutterBinding.instance.appKey,
-              child: widget.app,
-            ),
-            ..._buildAppOverlays(context),
-          ],
-        ),
+    return _buildAppWrappers(
+      context,
+      Stack(
+        children: [
+          RepaintBoundary(
+            key: SimulatorWidgetsFlutterBinding.instance.appKey,
+            child: widget.app,
+          ),
+          ..._buildAppOverlays(context),
+        ],
       ),
     );
   }
@@ -322,39 +320,54 @@ class SimulatorAppState extends State<SimulatorApp> {
                 right: 0.0,
                 bottom: 0.0,
                 child: LayoutBuilder(
-                  builder: (context, constraints) => Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Expanded(
-                        child: OverflowBox(
-                          maxWidth: constraints.maxWidth,
-                          maxHeight: constraints.maxHeight,
-                          child: _buildApp(context),
-                        ),
-                      ),
-                      SidePanelRevealAnimator(
-                        isVisible: _isSidePanelVisible,
-                        width: SimulatorPropertiesPanel.width + 12.0,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 12.0),
-                          child: _wrapWithMaterialStuff(
-                            context,
-                            child: SimulatorPropertiesPanel(
-                              key: _sidePanelKey,
-                              modules: widget.modules,
-                              state: _state,
-                              onChanged: (value) {
-                                _state = value;
-                                _saveParamsForModules();
+                  builder: (context, constraints) {
+                    var sidePanelClosedDeviceMaxWidth = constraints.maxWidth;
+                    var sidePanelOpenDeviceMaxWidth = constraints.maxWidth -
+                        SimulatorPropertiesPanel.width -
+                        12.0;
 
-                                setState(() {});
-                              },
+                    if (sidePanelOpenDeviceMaxWidth < 240.0) {
+                      sidePanelOpenDeviceMaxWidth = constraints.maxWidth;
+                    }
+
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          child: OverflowBox(
+                            alignment: Alignment.topLeft,
+                            minWidth: 0.0,
+                            maxWidth: _isSidePanelVisible
+                                ? sidePanelOpenDeviceMaxWidth
+                                : sidePanelClosedDeviceMaxWidth,
+                            maxHeight: constraints.maxHeight,
+                            child: _buildApp(context),
+                          ),
+                        ),
+                        SidePanelRevealAnimator(
+                          isVisible: _isSidePanelVisible,
+                          width: SimulatorPropertiesPanel.width + 12.0,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 12.0),
+                            child: _wrapWithMaterialStuff(
+                              context,
+                              child: SimulatorPropertiesPanel(
+                                key: _sidePanelKey,
+                                modules: widget.modules,
+                                state: _state,
+                                onChanged: (value) {
+                                  _state = value;
+                                  _saveParamsForModules();
+
+                                  setState(() {});
+                                },
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    );
+                  },
                 ),
               ),
               MobileGestureSimulatorWidget(
