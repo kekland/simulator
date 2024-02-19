@@ -38,4 +38,3 @@ class SimulatorPlatformDispatcher extends TestPlatformDispatcher {
     };
   }
 }
-

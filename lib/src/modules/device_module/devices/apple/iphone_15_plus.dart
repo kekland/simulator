@@ -72,7 +72,8 @@ Widget _iPhone15PlusFrame(BuildContext context, Widget child) {
             ),
           ),
         ],
-        padding: const EdgeInsets.symmetric(horizontal: IPhoneButton.offset - 1.0),
+        padding:
+            const EdgeInsets.symmetric(horizontal: IPhoneButton.offset - 1.0),
         child: StackedBordersWidget(
           innerRadius: const Radius.circular(165.0 / 3.0),
           borders: const [
