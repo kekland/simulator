@@ -1,3 +1,7 @@
+## 0.2.0
+
+* Update to support Flutter `3.19.2`
+
 ## 0.1.0
 
 * Fixed window resizing for macOS.
