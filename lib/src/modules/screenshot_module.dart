@@ -7,7 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:simulator/simulator.dart';
 import 'package:simulator/src/app/properties_panel/widgets.dart';
 import 'package:simulator/src/modules/_module.dart';
-import 'package:simulator/src/modules/device_module/device_properties.dart';
+import 'package:simulator/src/modules/device_module.dart';
 import 'package:simulator/src/platform_channels/platform_channel_interceptors.dart';
 import 'package:simulator/src/state/simulator_state.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -98,7 +98,8 @@ class ScreenshotModule extends SimulatorModule<ScreenshotModuleState> {
                   SimulatorWidgetsFlutterBinding.instance.appKey,
                 ],
                 pixelRatio: state
-                        .maybeGet<DeviceProperties>('device')
+                        .maybeGet<DeviceModuleState>('device')
+                        ?.device
                         ?.devicePixelRatio ??
                     1.0,
               );
