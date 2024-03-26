@@ -186,6 +186,7 @@ class DeviceModule extends SimulatorModule<DeviceModuleState> {
     }
 
     final screenOrientation = device.getScreenOrientation(orientation);
+    final screenSize = device.getScreenSize(screenOrientation);
 
     final viewPadding = device.viewPaddings[screenOrientation]!;
     const viewInsets = EdgeInsets.zero;
@@ -197,6 +198,7 @@ class DeviceModule extends SimulatorModule<DeviceModuleState> {
         data: MediaQuery.of(context).copyWith(
           viewPadding: viewPadding,
           viewInsets: viewInsets,
+          size: screenSize,
           padding: computePadding(
             viewInsets: viewInsets,
             viewPadding: viewPadding,
@@ -205,7 +207,7 @@ class DeviceModule extends SimulatorModule<DeviceModuleState> {
         child: RotatedBox(
           quarterTurns: -screenOrientation.quarterTurns,
           child: SizedBox.fromSize(
-            size: device.getScreenSize(screenOrientation),
+            size: screenSize,
             child: RepaintBoundary(
               key: SimulatorWidgetsFlutterBinding.instance.deviceScreenKey,
               child: _child,
