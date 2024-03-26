@@ -1,3 +1,7 @@
+## 0.2.1
+
+* Fix `MediaQuery` not being applied when a device is chosen.
+
 ## 0.2.0
 
 * Update to support Flutter `3.19.2`
