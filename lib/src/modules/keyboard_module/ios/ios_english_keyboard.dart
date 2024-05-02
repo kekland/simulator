@@ -10,25 +10,20 @@ class IOSEnglishKeyboard extends StatelessWidget
   const IOSEnglishKeyboard({super.key});
 
   void _onCharacterTap(String character) {
-    final eventData = RawKeyEventDataIos(
-      characters: character,
-      charactersIgnoringModifiers: character,
-      keyCode: 0,
-      modifiers: 0,
-    );
-
     SystemTextInputChannelInterceptor.instance.activeIME.handleKeyEvent(
-      RawKeyDownEvent(
-        data: eventData,
+      KeyDownEvent(
+        physicalKey: _findPhysicalKey(character),
+        logicalKey: _findLogicalKey(character),
         character: character,
-        repeat: false,
+        timeStamp: const Duration(milliseconds: 100),
       ),
     );
 
     SystemTextInputChannelInterceptor.instance.activeIME.handleKeyEvent(
-      RawKeyUpEvent(
-        data: eventData,
-        character: character,
+      KeyUpEvent(
+        physicalKey: _findPhysicalKey(character),
+        logicalKey: _findLogicalKey(character),
+        timeStamp: const Duration(milliseconds: 100),
       ),
     );
   }
@@ -226,3 +221,65 @@ class _IOSKeyboardKeyRow extends StatelessWidget {
     );
   }
 }
+
+PhysicalKeyboardKey _findPhysicalKey(String character) => switch (character) {
+      'a' => PhysicalKeyboardKey.keyA,
+      'b' => PhysicalKeyboardKey.keyB,
+      'c' => PhysicalKeyboardKey.keyC,
+      'd' => PhysicalKeyboardKey.keyD,
+      'e' => PhysicalKeyboardKey.keyE,
+      'f' => PhysicalKeyboardKey.keyF,
+      'g' => PhysicalKeyboardKey.keyG,
+      'h' => PhysicalKeyboardKey.keyH,
+      'i' => PhysicalKeyboardKey.keyI,
+      'j' => PhysicalKeyboardKey.keyJ,
+      'k' => PhysicalKeyboardKey.keyK,
+      'l' => PhysicalKeyboardKey.keyL,
+      'm' => PhysicalKeyboardKey.keyM,
+      'n' => PhysicalKeyboardKey.keyN,
+      'o' => PhysicalKeyboardKey.keyO,
+      'p' => PhysicalKeyboardKey.keyP,
+      'q' => PhysicalKeyboardKey.keyQ,
+      'r' => PhysicalKeyboardKey.keyR,
+      's' => PhysicalKeyboardKey.keyS,
+      't' => PhysicalKeyboardKey.keyT,
+      'u' => PhysicalKeyboardKey.keyU,
+      'v' => PhysicalKeyboardKey.keyV,
+      'w' => PhysicalKeyboardKey.keyW,
+      'x' => PhysicalKeyboardKey.keyX,
+      'y' => PhysicalKeyboardKey.keyY,
+      'z' => PhysicalKeyboardKey.keyZ,
+      ' ' => PhysicalKeyboardKey.space,
+      _ => throw Exception('Unsupported character: $character'),
+    };
+
+LogicalKeyboardKey _findLogicalKey(String character) => switch (character) {
+      'a' => LogicalKeyboardKey.keyA,
+      'b' => LogicalKeyboardKey.keyB,
+      'c' => LogicalKeyboardKey.keyC,
+      'd' => LogicalKeyboardKey.keyD,
+      'e' => LogicalKeyboardKey.keyE,
+      'f' => LogicalKeyboardKey.keyF,
+      'g' => LogicalKeyboardKey.keyG,
+      'h' => LogicalKeyboardKey.keyH,
+      'i' => LogicalKeyboardKey.keyI,
+      'j' => LogicalKeyboardKey.keyJ,
+      'k' => LogicalKeyboardKey.keyK,
+      'l' => LogicalKeyboardKey.keyL,
+      'm' => LogicalKeyboardKey.keyM,
+      'n' => LogicalKeyboardKey.keyN,
+      'o' => LogicalKeyboardKey.keyO,
+      'p' => LogicalKeyboardKey.keyP,
+      'q' => LogicalKeyboardKey.keyQ,
+      'r' => LogicalKeyboardKey.keyR,
+      's' => LogicalKeyboardKey.keyS,
+      't' => LogicalKeyboardKey.keyT,
+      'u' => LogicalKeyboardKey.keyU,
+      'v' => LogicalKeyboardKey.keyV,
+      'w' => LogicalKeyboardKey.keyW,
+      'x' => LogicalKeyboardKey.keyX,
+      'y' => LogicalKeyboardKey.keyY,
+      'z' => LogicalKeyboardKey.keyZ,
+      ' ' => LogicalKeyboardKey.space,
+      _ => throw Exception('Unsupported character: $character'),
+    };

@@ -20,7 +20,7 @@ mixin MobileGestureSimulatorBinding on BindingBase {
     SimulatorWidgetsFlutterBinding.instance.platformDispatcher
         .pointerDataPacketTransformer = _transformPointerDataPacket;
 
-    RawKeyboard.instance.addListener(_onKeybordEvent);
+    HardwareKeyboard.instance.addHandler(_onKeybordEvent);
   }
 
   var convertMouseToTouch = false;
@@ -30,17 +30,20 @@ mixin MobileGestureSimulatorBinding on BindingBase {
   Offset? _lastPointerLocation;
   Offset? _lastPointerLocalLocation;
 
-  void _onKeybordEvent(RawKeyEvent event) {
+  bool _onKeybordEvent(KeyEvent event) {
     if (zoomGestureEnabled &&
-        event is RawKeyDownEvent &&
-        event.isControlPressed &&
-        !event.repeat) {
+        event is KeyDownEvent &&
+        HardwareKeyboard.instance.isControlPressed) {
       _onZoomGestureStarted();
+      return true;
     }
 
-    if (event is RawKeyUpEvent && !event.isControlPressed) {
+    if (event is KeyUpEvent && !HardwareKeyboard.instance.isControlPressed) {
       _onZoomGestureEnded();
+      return true;
     }
+
+    return false;
   }
 
   MobileGestureSimulatorRenderObject get renderObject =>

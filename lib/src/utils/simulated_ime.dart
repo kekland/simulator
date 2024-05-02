@@ -109,11 +109,11 @@ class SimulatedIME {
     SystemTextInputChannelInterceptor.instance.updateEditingState(id, value);
   }
 
-  void handleKeyEvent(RawKeyEvent event) {
+  void handleKeyEvent(KeyEvent event) {
     final interceptor = SystemTextInputChannelInterceptor.instance;
 
     // TODO: Make this work for macOS
-    if (event is RawKeyDownEvent) {
+    if (event is KeyDownEvent) {
       if (event.character != null) {
         _appendCharacter(event.character!);
         interceptor.updateEditingState(id, value);

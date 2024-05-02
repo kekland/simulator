@@ -29,15 +29,17 @@ class SystemTextInputChannelInterceptor {
       instance._handleMessage,
     );
 
-    RawKeyboard.instance.addListener(instance._onKeyboardEvent);
+    HardwareKeyboard.instance.addHandler(instance._onKeyboardEvent);
     return instance;
   }
 
   static SystemTextInputChannelInterceptor get instance => _instance!;
   static SystemTextInputChannelInterceptor? _instance;
 
-  void _onKeyboardEvent(RawKeyEvent event) {
+  bool _onKeyboardEvent(KeyEvent event) {
+    final maybeActiveIME = this.maybeActiveIME;
     maybeActiveIME?.handleKeyEvent(event);
+    return maybeActiveIME != null;
   }
 
   Future<Object?>? _handleMessage(MethodCall message) async {
@@ -384,7 +386,7 @@ class SystemTextInputChannelInterceptor {
   }
 
   void dispose() {
-    RawKeyboard.instance.removeListener(instance._onKeyboardEvent);
+    HardwareKeyboard.instance.removeHandler(instance._onKeyboardEvent);
     SimulatorWidgetsFlutterBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
       SystemChannels.textInput,
