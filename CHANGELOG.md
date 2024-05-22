@@ -1,3 +1,9 @@
+## 0.3.0
+
+* Fix Linux builds (thanks to https://github.com/adil192)
+* Fix deprecations (thanks to https://github.com/adil192)
+* Update to support Flutter 3.22.0
+
 ## 0.2.1
 
 * Fix `MediaQuery` not being applied when a device is chosen.
