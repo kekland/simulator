@@ -5,6 +5,13 @@ class SimulatorPipelineOwner extends PipelineOwner {
   VoidCallback? onAfterFlushCompositingBits;
   VoidCallback? onAfterFlushPaint;
 
+  SimulatorPipelineOwner()
+      : super(
+          // Prevents crash on Linux from non-null assertion
+          // (https://github.com/kekland/simulator/issues/1)
+          onSemanticsUpdate: (_) {},
+        );
+
   @override
   void flushCompositingBits() {
     super.flushCompositingBits();
