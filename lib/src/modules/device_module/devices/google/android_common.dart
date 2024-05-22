@@ -114,7 +114,7 @@ class AndroidButtonsNavigationBar extends StatelessWidget {
 
         return AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          curve: decelerateEasing,
+          curve: Easing.legacyDecelerate,
           width: double.infinity,
           height: 48.0,
           color: backgroundColor,

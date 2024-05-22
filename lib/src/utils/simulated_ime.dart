@@ -109,15 +109,33 @@ class SimulatedIME {
     SystemTextInputChannelInterceptor.instance.updateEditingState(id, value);
   }
 
-  void handleKeyEvent(RawKeyEvent event) {
+  void handleKeyEvent(KeyEvent event) {
     final interceptor = SystemTextInputChannelInterceptor.instance;
 
+    String? characterToAppend;
+
     // TODO: Make this work for macOS
-    if (event is RawKeyDownEvent) {
-      if (event.character != null) {
-        _appendCharacter(event.character!);
-        interceptor.updateEditingState(id, value);
+    if (event is KeyDownEvent) {
+      if (event.logicalKey == LogicalKeyboardKey.backspace) {
+        handleBackspacePress();
+        return;
       }
+
+      characterToAppend = event.character;
+    }
+
+    if (event is KeyRepeatEvent) {
+      if (event.logicalKey == LogicalKeyboardKey.backspace) {
+        handleBackspacePress();
+        return;
+      }
+
+      characterToAppend = event.character;
+    }
+
+    if (characterToAppend != null) {
+      _appendCharacter(characterToAppend);
+      interceptor.updateEditingState(id, value);
     }
   }
 }

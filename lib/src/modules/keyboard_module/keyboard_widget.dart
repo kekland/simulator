@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:simulator/src/modules/keyboard_module/keyboard_ime_handler.dart';
 import 'package:simulator/src/utils/compute_padding.dart';
 
 class KeyboardWidget extends StatelessWidget {
@@ -23,29 +24,31 @@ class KeyboardWidget extends StatelessWidget {
     final mediaQuery = MediaQuery.of(context);
     final viewInsets = EdgeInsets.only(bottom: keyboardHeight * value);
 
-    return Stack(
-      fit: StackFit.passthrough,
-      children: [
-        MediaQuery(
-          data: mediaQuery.copyWith(
-            viewInsets: viewInsets,
-            padding: computePadding(
+    return KeyboardIMEHandler(
+      child: Stack(
+        fit: StackFit.passthrough,
+        children: [
+          MediaQuery(
+            data: mediaQuery.copyWith(
               viewInsets: viewInsets,
-              viewPadding: mediaQuery.viewPadding,
+              padding: computePadding(
+                viewInsets: viewInsets,
+                viewPadding: mediaQuery.viewPadding,
+              ),
+            ),
+            child: child,
+          ),
+          Positioned(
+            left: 0.0,
+            right: 0.0,
+            bottom: 0.0,
+            child: Transform.translate(
+              offset: Offset(0.0, (1.0 - value) * keyboardHeight),
+              child: keyboard,
             ),
           ),
-          child: child,
-        ),
-        Positioned(
-          left: 0.0,
-          right: 0.0,
-          bottom: 0.0,
-          child: Transform.translate(
-            offset: Offset(0.0, (1.0 - value) * keyboardHeight),
-            child: keyboard,
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

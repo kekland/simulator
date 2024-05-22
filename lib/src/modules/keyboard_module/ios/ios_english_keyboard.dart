@@ -1,42 +1,22 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
 import 'package:simulator/src/modules/keyboard_module/ios/ios_keyboard_key.dart';
 import 'package:simulator/src/modules/keyboard_module/ios/ios_keyboard_theme.dart';
-import 'package:simulator/src/platform_channels/system_text_input_channel_interceptor.dart';
+import 'package:simulator/src/modules/keyboard_module/keyboard_ime_handler.dart';
 import 'package:simulator/src/utils/utils.dart';
 
 class IOSEnglishKeyboard extends StatelessWidget
     implements PreferredSizeWidget {
   const IOSEnglishKeyboard({super.key});
 
-  void _onCharacterTap(String character) {
-    final eventData = RawKeyEventDataIos(
-      characters: character,
-      charactersIgnoringModifiers: character,
-      keyCode: 0,
-      modifiers: 0,
-    );
-
-    SystemTextInputChannelInterceptor.instance.activeIME.handleKeyEvent(
-      RawKeyDownEvent(
-        data: eventData,
-        character: character,
-        repeat: false,
-      ),
-    );
-
-    SystemTextInputChannelInterceptor.instance.activeIME.handleKeyEvent(
-      RawKeyUpEvent(
-        data: eventData,
-        character: character,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = IOSKeyboardTheme.of(context);
     const gap = 6.0;
+
+    // ignore: prefer_function_declarations_over_variables
+    final onCharacterTap = (String character) {
+      KeyboardIMEHandler.handleCharacter(context, character);
+    };
 
     return SizedBox.fromSize(
       size: preferredSize,
@@ -57,21 +37,21 @@ class IOSEnglishKeyboard extends StatelessWidget
               'p'
             ],
             gap: gap,
-            onCharacterTap: _onCharacterTap,
+            onCharacterTap: onCharacterTap,
           ),
           const SizedBox(height: 11.0),
           _IOSKeyboardKeyRow(
             padding: const EdgeInsets.symmetric(horizontal: 3.0),
             characters: const ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
             gap: gap,
-            onCharacterTap: _onCharacterTap,
+            onCharacterTap: onCharacterTap,
           ),
           const SizedBox(height: 11.0),
           _IOSKeyboardKeyRow(
             padding: const EdgeInsets.symmetric(horizontal: 3.0),
             characters: const ['z', 'x', 'c', 'v', 'b', 'n', 'm'],
             gap: gap,
-            onCharacterTap: _onCharacterTap,
+            onCharacterTap: onCharacterTap,
             leading: [
               IOSKeyboardKey(
                 size: const Size(44, 43),
@@ -88,10 +68,7 @@ class IOSEnglishKeyboard extends StatelessWidget
               IOSKeyboardKey(
                 size: const Size(44, 43),
                 foregroundColor: theme.specialKeyColor,
-                onTap: () {
-                  SystemTextInputChannelInterceptor.instance.activeIME
-                      .handleBackspacePress();
-                },
+                onTap: () => onCharacterTap('\b'),
                 child: Icon(
                   CupertinoIcons.delete_left,
                   size: 20.0,
@@ -105,7 +82,7 @@ class IOSEnglishKeyboard extends StatelessWidget
             padding: const EdgeInsets.symmetric(horizontal: 3.0),
             characters: const [],
             gap: gap,
-            onCharacterTap: _onCharacterTap,
+            onCharacterTap: onCharacterTap,
             leading: [
               IOSKeyboardKey(
                 size: const Size(42, 43),
@@ -130,9 +107,7 @@ class IOSEnglishKeyboard extends StatelessWidget
               const SizedBox(width: gap),
               Expanded(
                 child: IOSKeyboardKey(
-                  onTap: () {
-                    _onCharacterTap(' ');
-                  },
+                  onTap: () => onCharacterTap(' '),
                   child: const Text(
                     'space',
                     style: TextStyle(fontSize: 16),
@@ -145,10 +120,7 @@ class IOSEnglishKeyboard extends StatelessWidget
               IOSKeyboardKey(
                 size: const Size(91, 43),
                 foregroundColor: theme.specialKeyColor,
-                onTap: () {
-                  SystemTextInputChannelInterceptor.instance.activeIME
-                      .handleNewlinePress();
-                },
+                onTap: () => onCharacterTap('\n'),
                 child: const Text(
                   'return',
                   style: TextStyle(fontSize: 16),
