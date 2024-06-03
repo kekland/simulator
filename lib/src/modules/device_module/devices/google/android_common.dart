@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:simulator/simulator.dart';
 import 'package:simulator/src/modules/device_module/devices/device_widget.dart';
 
 class AndroidStatusBar extends StatelessWidget {
@@ -122,9 +123,15 @@ class AndroidButtonsNavigationBar extends StatelessWidget {
             children: [
               Expanded(
                 child: Center(
-                  child: CustomPaint(
-                    size: const Size(12, 14),
-                    painter: _BackTrianglePainter(color: foregroundColor),
+                  child: IconButton(
+                    onPressed: () {
+                      SimulatorWidgetsFlutterBinding.instance
+                          .simulateSystemPopEvent();
+                    },
+                    icon: CustomPaint(
+                      size: const Size(12, 14),
+                      painter: _BackTrianglePainter(color: foregroundColor),
+                    ),
                   ),
                 ),
               ),

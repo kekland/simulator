@@ -73,4 +73,8 @@ class SimulatorWidgetsFlutterBinding extends BindingBase
   void forceRebuildApp() {
     reassembleApplication();
   }
+
+  Future<void> simulateSystemPopEvent() async {
+    handlePopRoute();
+  }
 }

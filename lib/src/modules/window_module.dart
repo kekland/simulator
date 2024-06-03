@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/basic_types.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:simulator/src/app/properties_panel/widgets.dart';
 import 'package:simulator/src/modules/_module.dart';
 import 'package:simulator/src/state/simulator_state.dart';

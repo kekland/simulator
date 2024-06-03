@@ -244,6 +244,14 @@ class DebugModule extends SimulatorModule<DebugModuleProperties> {
               );
             },
           ),
+          ListTile(
+            title: const Text('System pop event'),
+            subtitle: const Text(
+              'Simulate system pop event (e.g. Android back button)',
+            ),
+            onTap:
+                SimulatorWidgetsFlutterBinding.instance.simulateSystemPopEvent,
+          ),
         ],
       ),
     );
