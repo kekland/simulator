@@ -1,3 +1,7 @@
+## 0.3.2
+
+* Add system pop event.
+
 ## 0.3.1
 
 * Add "Windows always on top" option.
