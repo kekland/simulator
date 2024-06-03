@@ -7,9 +7,11 @@ import 'package:simulator/src/modules/media_query_module.dart';
 import 'package:simulator/src/modules/debug_module.dart';
 import 'package:simulator/src/modules/screenshot_module.dart';
 import 'package:simulator/src/modules/vm_module.dart';
+import 'package:simulator/src/modules/window_module.dart';
 import 'package:simulator/src/state/simulator_state.dart';
 
 const defaultSimulatorModules = <SimulatorModule>[
+  WindowModule(),
   ScreenshotModule(),
   DeviceModule(),
   KeyboardModule(),
