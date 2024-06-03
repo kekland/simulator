@@ -53,7 +53,7 @@ However, this package is not a replacement for testing on real devices. It's jus
 
 ```yaml
 dependencies:
-  simulator: ^0.2.1
+  simulator: ^0.3.1
 ```
 
 Note: this package only works in Debug mode. The entire code of the package should be tree-shaken away in Release mode.

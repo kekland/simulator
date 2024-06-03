@@ -1,3 +1,7 @@
+## 0.3.1
+
+* Add "Windows always on top" option.
+
 ## 0.3.0
 
 * Fix Linux builds (thanks to https://github.com/adil192)
