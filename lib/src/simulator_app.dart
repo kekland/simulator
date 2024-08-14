@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:macos_window_utils/window_manipulator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,8 +14,10 @@ import 'package:simulator/src/bindings/mobile_gesture_simulator.dart';
 import 'package:simulator/src/modules/_module.dart';
 import 'package:simulator/src/platform_channels/platform_channel_interceptors.dart';
 import 'package:simulator/src/state/simulator_state.dart';
+import 'package:simulator/src/widgets/material_wrapper.dart';
 import 'package:simulator/src/widgets/side_panel_reveal_animator.dart';
 import 'package:simulator/src/widgets/window_resizable_area.dart';
+import 'package:simulator/src/widgets/windows/window_root_navigator.dart';
 import 'package:window_manager/window_manager.dart';
 
 late final SharedPreferences _prefs;
@@ -60,7 +63,7 @@ Future<void> _initWindow() async {
   );
 }
 
-final _simulatorRootKey = GlobalKey();
+final simulatorRootKey = GlobalKey();
 
 class SimulatorRootWidget extends StatelessWidget {
   const SimulatorRootWidget({
@@ -80,12 +83,34 @@ class SimulatorRootWidget extends StatelessWidget {
       Directionality(
         textDirection: TextDirection.ltr,
         child: SimulatorApp(
-          key: _simulatorRootKey,
+          key: simulatorRootKey,
           app: app,
           modules: modules,
         ),
       ),
     );
+  }
+}
+
+class InheritedSimulatorState extends InheritedWidget {
+  const InheritedSimulatorState({
+    super.key,
+    required Widget child,
+    required this.state,
+  }) : super(child: child);
+
+  final SimulatorState state;
+
+  static SimulatorState of(BuildContext context) {
+    final simulatorState =
+        context.dependOnInheritedWidgetOfExactType<InheritedSimulatorState>();
+
+    return simulatorState!.state;
+  }
+
+  @override
+  bool updateShouldNotify(InheritedSimulatorState oldWidget) {
+    return oldWidget.state != state;
   }
 }
 
@@ -115,7 +140,17 @@ class SimulatorAppState extends State<SimulatorApp> {
     super.initState();
 
     try {
+      final moduleIds = widget.modules.map((e) => e.id).toList();
+      var visualOrder =
+          _getSavedModuleOrder() ?? widget.modules.map((e) => e.id).toList();
+
+      if (!setEquals(moduleIds.toSet(), visualOrder.toSet())) {
+        throw Exception('Module order does not match');
+      }
+
       _state = SimulatorState(
+        moduleVisualOrder:
+            _getSavedModuleOrder() ?? widget.modules.map((e) => e.id).toList(),
         moduleState: Map.fromEntries(
           widget.modules.map(
             (module) => MapEntry(
@@ -129,6 +164,7 @@ class SimulatorAppState extends State<SimulatorApp> {
       debugPrint(e.toString());
 
       _state = SimulatorState(
+        moduleVisualOrder: widget.modules.map((e) => e.id).toList(),
         moduleState: Map.fromEntries(
           widget.modules.map(
             (module) => MapEntry(
@@ -144,6 +180,21 @@ class SimulatorAppState extends State<SimulatorApp> {
         _prefs.getBool('simulator-side-panel-visible') ?? false;
 
     PlatformChannelInterceptors.ensureInitialized();
+  }
+
+  List<String>? _getSavedModuleOrder() {
+    try {
+      final json = _prefs.getString('simulator-module-order');
+
+      if (json == null) {
+        return null;
+      }
+
+      return List<String>.from(jsonDecode(json));
+    } catch (e) {
+      debugPrint('Error reading saved module order: $e');
+      return null;
+    }
   }
 
   Map<String, dynamic>? _getSavedParamsForModule(String id) {
@@ -170,61 +221,18 @@ class SimulatorAppState extends State<SimulatorApp> {
     _prefs.setBool('simulator-side-panel-visible', _isSidePanelVisible);
   }
 
+  void _saveModuleOrder() {
+    final json = jsonEncode(_state.moduleVisualOrder);
+    _prefs.setString('simulator-module-order', json);
+  }
+
   void _onToggleSidePanel() {
     _isSidePanelVisible = !_isSidePanelVisible;
     setState(() {});
   }
 
-  Widget _wrapWithMaterialStuff(BuildContext context, {required Widget child}) {
-    return ListenableBuilder(
-      listenable: PlatformChannelInterceptors.system,
-      builder: (context, child) {
-        final primaryColor =
-            PlatformChannelInterceptors.system.primaryColor ?? Colors.blue;
-
-        return Theme(
-          data: ThemeData(
-            platform: TargetPlatform.android,
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: primaryColor,
-              brightness: Brightness.dark,
-            ),
-          ),
-          child: child!,
-        );
-      },
-      child: DefaultTextEditingShortcuts(
-        child: Shortcuts(
-          shortcuts: WidgetsApp.defaultShortcuts,
-          child: Actions(
-            actions: WidgetsApp.defaultActions,
-            child: Localizations(
-              locale: const Locale('en', 'US'),
-              delegates: const [
-                DefaultWidgetsLocalizations.delegate,
-                DefaultMaterialLocalizations.delegate,
-              ],
-              child: Material(
-                type: MaterialType.transparency,
-                child: Navigator(
-                  onPopPage: (route, result) {
-                    return true;
-                  },
-                  pages: [
-                    MaterialPage(child: child),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildAppBar(BuildContext context) {
-    return _wrapWithMaterialStuff(
-      context,
+    return MaterialWrapper(
       child: Stack(
         children: [
           ListenableBuilder(
@@ -275,6 +283,9 @@ class SimulatorAppState extends State<SimulatorApp> {
       final overlay = module.buildOverlay(
         context,
         _state,
+        (v) => setSimulatorState(
+          _state.copyWithModuleState(module.id, v),
+        ),
       );
 
       if (overlay != null) {
@@ -300,80 +311,102 @@ class SimulatorAppState extends State<SimulatorApp> {
     );
   }
 
+  void setSimulatorState(SimulatorState value) {
+    _state = value;
+
+    _saveParamsForModules();
+    _saveModuleOrder();
+
+    setState(() {});
+  }
+
+  List<SimulatorModule> get _orderedModules {
+    final moduleOrder = _state.moduleVisualOrder;
+    final modules = widget.modules;
+
+    return moduleOrder.map((id) {
+      return modules.firstWhere((e) => e.id == id);
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: Colors.transparent,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: WindowResizableArea(
-          child: Stack(
-            fit: StackFit.passthrough,
-            clipBehavior: Clip.none,
-            children: [
-              Positioned.fill(
-                child: _buildAppBar(context),
-              ),
-              Positioned(
-                top: SimulatorAppBar.height + 16.0,
-                left: 0.0,
-                right: 0.0,
-                bottom: 0.0,
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    var sidePanelClosedDeviceMaxWidth = constraints.maxWidth;
-                    var sidePanelOpenDeviceMaxWidth = constraints.maxWidth -
-                        SimulatorPropertiesPanel.width -
-                        12.0;
-
-                    if (sidePanelOpenDeviceMaxWidth < 240.0) {
-                      sidePanelOpenDeviceMaxWidth = constraints.maxWidth;
-                    }
-
-                    return Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Expanded(
-                          child: OverflowBox(
-                            alignment: Alignment.topLeft,
-                            minWidth: 0.0,
-                            maxWidth: _isSidePanelVisible
-                                ? sidePanelOpenDeviceMaxWidth
-                                : sidePanelClosedDeviceMaxWidth,
-                            maxHeight: constraints.maxHeight,
-                            child: _buildApp(context),
-                          ),
-                        ),
-                        SidePanelRevealAnimator(
-                          isVisible: _isSidePanelVisible,
-                          width: SimulatorPropertiesPanel.width + 12.0,
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 12.0),
-                            child: _wrapWithMaterialStuff(
-                              context,
-                              child: SimulatorPropertiesPanel(
-                                key: _sidePanelKey,
-                                modules: widget.modules,
-                                state: _state,
-                                onChanged: (value) {
-                                  _state = value;
-                                  _saveParamsForModules();
-
-                                  setState(() {});
-                                },
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
+    return InheritedSimulatorState(
+      state: _state,
+      child: ColoredBox(
+        color: Colors.transparent,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: WindowResizableArea(
+            child: Stack(
+              fit: StackFit.passthrough,
+              clipBehavior: Clip.none,
+              children: [
+                Positioned.fill(
+                  child: _buildAppBar(context),
                 ),
-              ),
-              MobileGestureSimulatorWidget(
-                key: MobileGestureSimulatorWidget.requiredKey,
-              ),
-            ],
+                Positioned(
+                  top: SimulatorAppBar.height + 16.0,
+                  left: 0.0,
+                  right: 0.0,
+                  bottom: 0.0,
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      var sidePanelClosedDeviceMaxWidth = constraints.maxWidth;
+                      var sidePanelOpenDeviceMaxWidth = constraints.maxWidth -
+                          SimulatorPropertiesPanel.width -
+                          12.0;
+      
+                      if (sidePanelOpenDeviceMaxWidth < 240.0) {
+                        sidePanelOpenDeviceMaxWidth = constraints.maxWidth;
+                      }
+      
+                      return Stack(
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Expanded(
+                                child: OverflowBox(
+                                  alignment: Alignment.topLeft,
+                                  minWidth: 0.0,
+                                  maxWidth: _isSidePanelVisible
+                                      ? sidePanelOpenDeviceMaxWidth
+                                      : sidePanelClosedDeviceMaxWidth,
+                                  maxHeight: constraints.maxHeight,
+                                  child: _buildApp(context),
+                                ),
+                              ),
+                              SidePanelRevealAnimator(
+                                isVisible: _isSidePanelVisible,
+                                width: SimulatorPropertiesPanel.width + 12.0,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 12.0),
+                                  child: MaterialWrapper(
+                                    child: SimulatorPropertiesPanel(
+                                      key: _sidePanelKey,
+                                      modules: _orderedModules,
+                                      state: _state,
+                                      onChanged: setSimulatorState,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Positioned.fill(
+                            child: WindowRootNavigator(),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+                MobileGestureSimulatorWidget(
+                  key: MobileGestureSimulatorWidget.requiredKey,
+                ),
+              ],
+            ),
           ),
         ),
       ),

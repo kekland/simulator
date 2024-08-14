@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:simulator/simulator.dart';
 
@@ -38,13 +40,37 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
+  late final _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(seconds: 1),
+  )..repeat(reverse: true);
+
+  late final _animation = createSimulatedAnimation(
+    CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(
+        0.0,
+        1.0,
+        curve: Curves.easeInOut,
+      ),
+    ),
+    label: 'Rotation Animation',
+  );
+
   int _counter = 0;
 
   void _incrementCounter() {
     setState(() {
       _counter++;
     });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -70,6 +96,21 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            const SizedBox(height: 64.0),
+            AnimatedBuilder(
+              animation: _animation,
+              builder: (context, child) {
+                return Transform.rotate(
+                  angle: _animation.value * 2 * pi,
+                  child: child,
+                );
+              },
+              child: Container(
+                width: 200.0,
+                height: 200.0,
+                color: Colors.purple,
+              ),
             ),
             const SizedBox(height: 64.0),
             ElevatedButton(
@@ -116,7 +157,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 List<Container> get _testContainers => List.generate(
-      100,
+      10,
       (v) {
         if (v % 2 == 0) {
           return Container(

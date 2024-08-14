@@ -70,7 +70,7 @@ class ScreenshotModule extends SimulatorModule<ScreenshotModuleState> {
     return SectionCard(
       leading: const Icon(Icons.photo_camera_rounded),
       title: const Text('Screenshot'),
-      child: SectionList(
+      builder: (context) =>  SectionList(
         automaticallyImplyDividers: false,
         children: [
           RadioListTile(

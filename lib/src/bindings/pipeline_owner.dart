@@ -2,8 +2,8 @@ import 'package:flutter/rendering.dart';
 import 'package:simulator/simulator.dart';
 
 class SimulatorPipelineOwner extends PipelineOwner {
-  VoidCallback? onAfterFlushCompositingBits;
-  VoidCallback? onAfterFlushPaint;
+  final _onAfterFlushCompositingBits = <VoidCallback>[];
+  final _onAfterFlushPaint = <VoidCallback>[];
 
   SimulatorPipelineOwner()
       : super(
@@ -12,10 +12,29 @@ class SimulatorPipelineOwner extends PipelineOwner {
           onSemanticsUpdate: (_) {},
         );
 
+  void addAfterFlushCompositingBitsCallback(VoidCallback callback) {
+    _onAfterFlushCompositingBits.add(callback);
+  }
+
+  void addAfterFlushPaintCallback(VoidCallback callback) {
+    _onAfterFlushPaint.add(callback);
+  }
+
+  void removeAfterFlushCompositingBitsCallback(VoidCallback callback) {
+    _onAfterFlushCompositingBits.remove(callback);
+  }
+
+  void removeAfterFlushPaintCallback(VoidCallback callback) {
+    _onAfterFlushPaint.remove(callback);
+  }
+
   @override
   void flushCompositingBits() {
     super.flushCompositingBits();
-    onAfterFlushCompositingBits?.call();
+
+    for (final cb in _onAfterFlushCompositingBits) {
+      cb();
+    }
   }
 
   bool get _isAppRepaintBoundaryDirty {
@@ -45,7 +64,9 @@ class SimulatorPipelineOwner extends PipelineOwner {
     super.flushPaint();
 
     if (wasAppDirty) {
-      onAfterFlushPaint?.call();
+      for (final cb in _onAfterFlushPaint) {
+        cb();
+      }
     }
   }
 }

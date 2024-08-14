@@ -9,7 +9,6 @@ import 'package:simulator/src/state/simulator_state.dart';
 class DebugModuleProperties {
   const DebugModuleProperties({
     this.timeDilation = 1.0,
-    this.isPointerAreaHighlightEnabled = false,
     this.isVisualizeViewPaddingsEnabled = false,
     this.paintPointersEnabled = false,
     this.invertOversizedImages = false,
@@ -23,8 +22,6 @@ class DebugModuleProperties {
   factory DebugModuleProperties.fromJson(Map<String, dynamic> json) {
     return DebugModuleProperties(
       timeDilation: json['timeDilation'] ?? 1.0,
-      isPointerAreaHighlightEnabled:
-          json['isPointerAreaHighlightEnabled'] ?? false,
       isVisualizeViewPaddingsEnabled:
           json['isVisualizeViewPaddingsEnabled'] ?? false,
       paintPointersEnabled: json['paintPointersEnabled'] ?? false,
@@ -37,7 +34,6 @@ class DebugModuleProperties {
     );
   }
 
-  final bool isPointerAreaHighlightEnabled;
   final bool isVisualizeViewPaddingsEnabled;
   final double timeDilation;
   final bool invertOversizedImages;
@@ -49,7 +45,6 @@ class DebugModuleProperties {
   final bool paintBaselinesEnabled;
 
   DebugModuleProperties copyWith({
-    bool? isPointerAreaHighlightEnabled,
     bool? isVisualizeViewPaddingsEnabled,
     double? timeDilation,
     bool? invertOversizedImages,
@@ -61,8 +56,6 @@ class DebugModuleProperties {
     bool? paintBaselinesEnabled,
   }) {
     return DebugModuleProperties(
-      isPointerAreaHighlightEnabled:
-          isPointerAreaHighlightEnabled ?? this.isPointerAreaHighlightEnabled,
       isVisualizeViewPaddingsEnabled:
           isVisualizeViewPaddingsEnabled ?? this.isVisualizeViewPaddingsEnabled,
       timeDilation: timeDilation ?? this.timeDilation,
@@ -82,7 +75,6 @@ class DebugModuleProperties {
 
   Map<String, dynamic> toJson() {
     return {
-      'isPointerAreaHighlightEnabled': isPointerAreaHighlightEnabled,
       'isVisualizeViewPaddingsEnabled': isVisualizeViewPaddingsEnabled,
       'timeDilation': timeDilation,
       'invertOversizedImages': invertOversizedImages,
@@ -126,17 +118,8 @@ class DebugModule extends SimulatorModule<DebugModuleProperties> {
     return SectionCard(
       leading: const Icon(Icons.bug_report_rounded),
       title: const Text('Debug'),
-      child: SectionList(
+      builder: (context) => SectionList(
         children: <Widget>[
-          CheckboxListTile(
-            title: const Text('Pointer area highlight'),
-            value: data.isPointerAreaHighlightEnabled,
-            onChanged: (v) {
-              _onChanged(
-                data.copyWith(isPointerAreaHighlightEnabled: v),
-              );
-            },
-          ),
           CheckboxListTile(
             title: const Text('Visualize view paddings'),
             value: data.isVisualizeViewPaddingsEnabled,
@@ -255,19 +238,6 @@ class DebugModule extends SimulatorModule<DebugModuleProperties> {
         ],
       ),
     );
-  }
-
-  @override
-  Widget? buildOverlay(
-    BuildContext context,
-    SimulatorState state,
-  ) {
-    final data = getDataFromState(state);
-
-    if (!data.isPointerAreaHighlightEnabled) return null;
-
-    return SimulatorWidgetsFlutterBinding.instance
-        .buildPointerListenerOverlay();
   }
 
   @override

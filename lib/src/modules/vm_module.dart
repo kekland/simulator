@@ -110,7 +110,7 @@ class _VmSectionState extends State<VmSection> {
     return SectionCard(
       leading: const Icon(Icons.memory_rounded),
       title: const Text('VM'),
-      child: SectionList(
+      builder: (context) =>  SectionList(
         children: [
           ...body,
         ],

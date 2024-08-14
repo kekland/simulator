@@ -86,25 +86,27 @@ class GesturesModule extends SimulatorModule<GesturesModuleState> {
     return SectionCard(
       leading: const Icon(Icons.touch_app_rounded),
       title: const Text('Gestures'),
-      child: SectionList(
-        children: [
-          CheckboxListTile(
-            title: const Text('Convert mouse to touch events'),
-            value: data.convertMouseToTouch,
-            onChanged: (value) {
-              _onChanged(data.copyWith(convertMouseToTouch: value));
-            },
-          ),
-          CheckboxListTile(
-            title: const Text('Enable zoom gesture'),
-            subtitle: const Text('Press and hold Control to simulate pinch'),
-            value: data.enableZoomGesture,
-            onChanged: (value) {
-              _onChanged(data.copyWith(enableZoomGesture: value));
-            },
-          ),
-        ],
-      ),
+      builder: (context) {
+        return SectionList(
+          children: [
+            CheckboxListTile(
+              title: const Text('Convert mouse to touch events'),
+              value: data.convertMouseToTouch,
+              onChanged: (value) {
+                _onChanged(data.copyWith(convertMouseToTouch: value));
+              },
+            ),
+            CheckboxListTile(
+              title: const Text('Enable zoom gesture'),
+              subtitle: const Text('Press and hold Control to simulate pinch'),
+              value: data.enableZoomGesture,
+              onChanged: (value) {
+                _onChanged(data.copyWith(enableZoomGesture: value));
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

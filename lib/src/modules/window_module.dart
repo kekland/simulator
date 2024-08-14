@@ -45,7 +45,7 @@ class WindowModule extends SimulatorModule<WindowProperties> {
     return SectionCard(
       leading: const Icon(Icons.window_rounded),
       title: const Text('Window'),
-      child: SectionList(
+      builder: (context) => SectionList(
         automaticallyImplyDividers: false,
         children: [
           CheckboxListTile(

@@ -30,11 +30,15 @@ class SimulatorPlatformDispatcher extends TestPlatformDispatcher {
   @override
   set onPointerDataPacket(PointerDataPacketCallback? callback) {
     super.onPointerDataPacket = (packet) {
-      if (_pointerDataPacketTransformer != null) {
-        packet = _pointerDataPacketTransformer!(packet);
-      }
+      try {
+        if (_pointerDataPacketTransformer != null) {
+          packet = _pointerDataPacketTransformer!(packet);
+        }
 
-      callback?.call(packet);
+        callback?.call(packet);
+      } catch (e) {
+        // Swallow errors
+      }
     };
   }
 }

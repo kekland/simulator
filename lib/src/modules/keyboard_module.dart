@@ -67,7 +67,7 @@ class KeyboardModule extends SimulatorModule<KeyboardModuleState> {
     return SectionCard(
       leading: const Icon(Icons.keyboard_rounded),
       title: const Text('Keyboard'),
-      child: SectionList(
+      builder: (context) => SectionList(
         children: [
           RadioListTile<KeyboardType>(
             title: const Text('Disabled'),

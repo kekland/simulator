@@ -70,7 +70,7 @@ class LocaleModule extends SimulatorModule<LocaleModuleState> {
     return SectionCard(
       title: const Text('Locale'),
       leading: const Icon(Icons.translate_rounded),
-      child: SectionList(
+      builder: (context) => SectionList(
         children: [
           for (final locale in _supportedLocales)
             RadioListTile(

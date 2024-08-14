@@ -10,8 +10,8 @@ mixin PointerListenerExtractorBinding on SchedulerBinding, RendererBinding {
   void initInstances() {
     super.initInstances();
 
-    (rootPipelineOwner as SimulatorPipelineOwner).onAfterFlushCompositingBits =
-        _capturePointerListeners;
+    (rootPipelineOwner as SimulatorPipelineOwner)
+        .addAfterFlushCompositingBitsCallback(_capturePointerListeners);
   }
 
   final pointerListenerOverlayKey = GlobalKey();

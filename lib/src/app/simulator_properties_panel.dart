@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:simulator/src/modules/_module.dart';
 import 'package:simulator/src/state/simulator_state.dart';
-import 'package:simulator/src/utils/utils.dart';
 
 class SimulatorPropertiesPanel extends StatefulWidget {
   const SimulatorPropertiesPanel({
@@ -37,31 +36,45 @@ class _SimulatorPropertiesPanelState extends State<SimulatorPropertiesPanel> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: SimulatorPropertiesPanel.width,
-      height: double.infinity,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: widget.modules
-                .map<Widget>(
-                  (module) => KeyedSubtree(
-                    key: _moduleKeys[module]!,
-                    child: module.buildPanel(
-                      context,
-                      widget.state,
-                      (v) => widget.onChanged(
-                        widget.state.copyWith(module.id, v),
-                      ),
-                    ),
-                  ),
-                )
-                .intersperse(const SizedBox(height: 12.0))
-                .toList(),
-          ),
-        ),
-      ),
+    return ReorderableList(
+      itemCount: _moduleKeys.length,
+      onReorder: (oldIndex, newIndex) {
+        setState(() {
+          final moduleList = widget.state.moduleVisualOrder;
+          final newModuleList = List<String>.from(moduleList);
+
+          if (oldIndex < newIndex) {
+            newIndex -= 1;
+          }
+
+          final item = newModuleList.removeAt(oldIndex);
+          newModuleList.insert(newIndex, item);
+
+          widget.onChanged(
+            widget.state.copyWith(moduleVisualOrder: newModuleList),
+          );
+        });
+      },
+      itemBuilder: (context, i) {
+        final module = widget.modules[i];
+
+        return Column(
+          key: _moduleKeys[module]!,
+          children: [
+            ReorderableDelayedDragStartListener(
+              index: i,
+              child: module.buildPanel(
+                context,
+                widget.state,
+                (v) => widget.onChanged(
+                  widget.state.copyWithModuleState(module.id, v),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12.0),
+          ],
+        );
+      },
     );
   }
 }

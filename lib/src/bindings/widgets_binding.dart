@@ -70,6 +70,10 @@ class SimulatorWidgetsFlutterBinding extends BindingBase
   RenderRepaintBoundary get appRepaintBoundary =>
       appKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
 
+  @override
+  SimulatorPipelineOwner get rootPipelineOwner =>
+      super.rootPipelineOwner as SimulatorPipelineOwner;
+
   void forceRebuildApp() {
     reassembleApplication();
   }

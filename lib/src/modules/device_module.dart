@@ -9,6 +9,7 @@ import 'package:simulator/src/modules/device_module/devices/devices.dart';
 import 'package:simulator/src/state/simulator_state.dart';
 import 'package:simulator/src/utils/compute_padding.dart';
 import 'package:simulator/src/utils/device_orientation.dart';
+import 'package:simulator/src/widgets/expansion_tile.dart';
 
 class DeviceModuleState {
   const DeviceModuleState({
@@ -128,7 +129,7 @@ class DeviceModule extends SimulatorModule<DeviceModuleState> {
     return SectionCard(
       leading: const Icon(Icons.phone_android_rounded),
       title: const Text('Device'),
-      child: SectionList(
+      builder: (context) => SectionList(
         automaticallyImplyDividers: false,
         children: [
           _DeviceOrientationPicker(
@@ -146,19 +147,21 @@ class DeviceModule extends SimulatorModule<DeviceModuleState> {
             subtitle: const Text('Frameless, resizes to fit'),
           ),
           for (final manufacturer in groupedDevices.keys)
-            ExpansionTile(
+            SmExpansionTile(
               title: Text(manufacturer),
-              children: [
-                for (final device in groupedDevices[manufacturer]!)
-                  RadioListTile<DeviceProperties?>(
-                    value: device,
-                    groupValue: data.device,
-                    onChanged: _onDeviceChanged,
-                    title: Text(device.name),
-                    subtitle: Text(
-                        '${device.screenSize.width} × ${device.screenSize.height}'),
-                  ),
-              ],
+              child: Column(
+                children: [
+                  for (final device in groupedDevices[manufacturer]!)
+                    RadioListTile<DeviceProperties?>(
+                      value: device,
+                      groupValue: data.device,
+                      onChanged: _onDeviceChanged,
+                      title: Text(device.name),
+                      subtitle: Text(
+                          '${device.screenSize.width} × ${device.screenSize.height}'),
+                    ),
+                ],
+              ),
             ),
         ],
       ),
@@ -199,6 +202,7 @@ class DeviceModule extends SimulatorModule<DeviceModuleState> {
           viewPadding: viewPadding,
           viewInsets: viewInsets,
           size: screenSize,
+          devicePixelRatio: device.devicePixelRatio,
           padding: computePadding(
             viewInsets: viewInsets,
             viewPadding: viewPadding,

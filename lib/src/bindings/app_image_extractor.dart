@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:simulator/simulator.dart';
-import 'package:simulator/src/bindings/pipeline_owner.dart';
 import 'dart:ui' as ui;
 
 typedef AppImageListener = void Function(ui.Image image);
@@ -26,10 +25,8 @@ mixin AppImageExtractorBinding on BindingBase {
   }
 
   void _initialize() {
-    final pipelineOwner = SimulatorWidgetsFlutterBinding
-        .instance.rootPipelineOwner as SimulatorPipelineOwner;
-
-    pipelineOwner.onAfterFlushPaint = _onAfterFlushPaint;
+    SimulatorWidgetsFlutterBinding.instance.rootPipelineOwner
+        .addAfterFlushPaintCallback(_onAfterFlushPaint);
   }
 
   void _onAfterFlushPaint() {

@@ -247,7 +247,7 @@ class MediaQuerySection extends StatelessWidget {
     return SectionCard(
       leading: const Icon(Icons.monitor_rounded),
       title: const Text('MediaQuery'),
-      child: SectionList(
+      builder: (context) =>  SectionList(
         children: [
           ListTile(
             onTap: () {

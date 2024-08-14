@@ -1,68 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:simulator/simulator.dart';
 import 'package:simulator/src/utils/utils.dart';
+import 'package:simulator/src/widgets/expansion_tile.dart';
 import 'package:simulator/src/widgets/number_text_field.dart';
+import 'package:simulator/src/widgets/windows/window_root_navigator.dart';
 
 class SectionCard extends StatefulWidget {
   const SectionCard({
     super.key,
     required this.title,
-    required this.child,
+    required this.builder,
     this.leading,
   });
 
   final Widget? leading;
   final Widget title;
-  final Widget child;
+  final WidgetBuilder builder;
 
   @override
   State<SectionCard> createState() => _SectionCardState();
 }
 
-class _SectionCardState extends State<SectionCard>
-    with AutomaticKeepAliveClientMixin {
-  bool _isExpanded = false;
-
+class _SectionCardState extends State<SectionCard> {
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-
-    return ListTileTheme(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Material(
-        borderRadius: BorderRadius.circular(16.0),
-        elevation: 4.0,
-        clipBehavior: Clip.antiAlias,
-        child: Column(
-          children: [
-            SectionTitle(
-              leading: widget.leading,
-              title: widget.title,
-              isExpanded: _isExpanded,
-              onToggle: () {
-                _isExpanded = !_isExpanded;
-                setState(() {});
-              },
-            ),
-            AnimatedCrossFade(
-              firstChild: Container(height: 0.0),
-              secondChild: widget.child,
-              firstCurve: const Interval(0.0, 0.6, curve: Curves.fastOutSlowIn),
-              secondCurve:
-                  const Interval(0.4, 1.0, curve: Curves.fastOutSlowIn),
-              sizeCurve: Curves.fastOutSlowIn,
-              crossFadeState: _isExpanded
-                  ? CrossFadeState.showSecond
-                  : CrossFadeState.showFirst,
-              duration: const Duration(milliseconds: 150),
-            ),
-          ],
-        ),
-      ),
+    return SmExpansionTile(
+      isElevated: true,
+      leading: widget.leading,
+      title: widget.title,
+      onOpenInWindow: () {
+        windowRootNavigatorStateKey.currentState!.pushWindow(
+          (context) {
+            InheritedSimulatorState.of(context);
+            return widget.builder(context);
+          },
+          icon: widget.leading,
+          title: widget.title,
+        );
+      },
+      child: widget.builder(context),
     );
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }
 
 class SectionList extends StatelessWidget {
@@ -89,15 +67,19 @@ class SectionTitle extends StatelessWidget {
   const SectionTitle({
     super.key,
     this.leading,
+    this.subtitle,
     required this.title,
     required this.isExpanded,
     required this.onToggle,
+    this.onOpenInWindow,
   });
 
   final Widget? leading;
   final bool isExpanded;
   final VoidCallback onToggle;
+  final VoidCallback? onOpenInWindow;
   final Widget title;
+  final Widget? subtitle;
 
   @override
   Widget build(BuildContext context) {
@@ -107,10 +89,21 @@ class SectionTitle extends StatelessWidget {
         style: Theme.of(context).textTheme.titleMedium!,
         child: title,
       ),
+      subtitle: subtitle,
       leading: leading,
-      trailing: RotatedBox(
-        quarterTurns: isExpanded ? 3 : 1,
-        child: const Icon(Icons.chevron_right_rounded),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (onOpenInWindow != null)
+            IconButton(
+              onPressed: onOpenInWindow,
+              icon: const Icon(Icons.open_in_new_rounded),
+            ),
+          RotatedBox(
+            quarterTurns: isExpanded ? 3 : 1,
+            child: const Icon(Icons.chevron_right_rounded),
+          ),
+        ],
       ),
     );
   }
@@ -120,21 +113,27 @@ class SliderTile extends StatelessWidget {
   const SliderTile({
     super.key,
     required this.title,
-    required this.subtitle,
+    this.subtitle,
     required this.value,
     required this.onChanged,
     required this.min,
     required this.max,
+    this.divisions,
+    this.resetValue = 1.0,
   });
 
   final String title;
-  final String subtitle;
+  final String? subtitle;
 
   final double value;
   final ValueChanged<double> onChanged;
 
   final double min;
   final double max;
+
+  final int? divisions;
+
+  final double resetValue;
 
   @override
   Widget build(BuildContext context) {
@@ -145,21 +144,26 @@ class SliderTile extends StatelessWidget {
           contentPadding: const EdgeInsets.only(left: 16.0, right: 8.0),
           trailing: TextButton(
             onPressed: () {
-              onChanged(1.0);
+              onChanged(resetValue);
             },
             child: const Text('RESET'),
           ),
-          subtitle: Text(
-            subtitle,
-          ),
+          subtitle: subtitle != null ? Text(subtitle!) : null,
         ),
-        Slider(
-          min: 0.5,
-          max: 5.0,
-          value: value,
-          onChanged: (value) {
-            onChanged(value);
-          },
+        SliderTheme(
+          data: const SliderThemeData(
+            showValueIndicator: ShowValueIndicator.always,
+          ),
+          child: Slider(
+            min: min,
+            max: max,
+            value: value,
+            label: value.toStringAsFixed(2),
+            divisions: divisions,
+            onChanged: (value) {
+              onChanged(value);
+            },
+          ),
         ),
       ],
     );

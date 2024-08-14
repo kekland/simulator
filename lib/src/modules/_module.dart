@@ -1,6 +1,8 @@
 import 'package:flutter/widgets.dart';
+import 'package:simulator/src/modules/animation_module.dart';
 import 'package:simulator/src/modules/device_module.dart';
 import 'package:simulator/src/modules/gestures_module.dart';
+import 'package:simulator/src/modules/inspector_module.dart';
 import 'package:simulator/src/modules/keyboard_module.dart';
 import 'package:simulator/src/modules/locale_module.dart';
 import 'package:simulator/src/modules/media_query_module.dart';
@@ -20,9 +22,11 @@ const defaultSimulatorModules = <SimulatorModule>[
   DebugModule(),
   LocaleModule(),
   MediaQueryModule(),
+  InspectorModule(),
+  AnimationModule(),
 ];
 
-abstract class SimulatorModule<T> {
+abstract class SimulatorModule<T> { 
   const SimulatorModule();
 
   String get id;
@@ -51,6 +55,7 @@ abstract class SimulatorModule<T> {
   Widget? buildOverlay(
     BuildContext context,
     SimulatorState state,
+    ValueChanged<T> onChanged,
   ) {
     return null;
   }
