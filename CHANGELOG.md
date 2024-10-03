@@ -1,3 +1,7 @@
+## 0.3.3
+
+* Add "Window title bar visibility" option.
+
 ## 0.3.2
 
 * Add system pop event.
