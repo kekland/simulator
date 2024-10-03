@@ -1,3 +1,7 @@
+## 0.3.4
+
+* Remove `setAsFrameless` call on initialization.
+
 ## 0.3.3
 
 * Add "Window title bar visibility" option.
