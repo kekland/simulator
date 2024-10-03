@@ -54,8 +54,6 @@ Future<void> _initWindow() async {
   await windowManager.waitUntilReadyToShow(
     windowOptions,
     () async {
-      await windowManager.setAsFrameless();
-
       if (!Platform.isMacOS) {
         await windowManager.show();
       }

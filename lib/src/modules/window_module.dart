@@ -60,6 +60,8 @@ class WindowModule extends SimulatorModule<WindowProperties> {
         TitleBarStyle.hidden,
         windowButtonVisibility: false,
       );
+
+      windowManager.setAsFrameless();
     }
 
     return SectionCard(
