@@ -1,7 +1,7 @@
 import 'package:flutter/rendering.dart';
 import 'package:simulator/simulator.dart';
 
-class SimulatorPipelineOwner extends PipelineOwner {
+final class SimulatorPipelineOwner extends PipelineOwner {
   final _onAfterFlushCompositingBits = <VoidCallback>[];
   final _onAfterFlushPaint = <VoidCallback>[];
 
