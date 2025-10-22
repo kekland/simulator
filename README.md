@@ -74,7 +74,7 @@ Now you can run the simulator with `flutter run -t lib/main.simulator.dart`. Mak
 
 ## macOS
 
-The minimum macOS deployment target is `10.14.6`. This comes from the `macos_window_utils` package.
+The minimum macOS deployment target is `10.15.0`.
 
 See https://github.com/macosui/macos_window_utils.dart?tab=readme-ov-file#getting-started for more information on how to change the minimum deployment target.
 
